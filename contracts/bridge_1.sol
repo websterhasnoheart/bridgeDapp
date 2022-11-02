@@ -29,8 +29,6 @@ contract Bridge {
             uint256 _projectBudget,
             uint256 PaymentInterval
     ) payable {
-            require(_contractor != address(0));
-            require(projectBudget != 0);
             owner = _owner;
             contractor = _contractor;
             name = _name;
@@ -38,6 +36,8 @@ contract Bridge {
             startTime = block.timestamp;
             projectBudget = _projectBudget;
             interval = PaymentInterval;
+            require(_contractor != address(0));
+            require(projectBudget != 0);
     }
 
     //Modifiers
@@ -56,7 +56,7 @@ contract Bridge {
         //Used for receiving ETH from other address/contract
     }
 
-    function transfer(address payable _to, uint256 amount) onlyOwner onlyContractor public payable{
+    function transfer(address payable _to, uint256 amount) public payable{
         //Transfer funds to different address
         (bool success,) = _to.call{value: amount}("");
         if(!success){
