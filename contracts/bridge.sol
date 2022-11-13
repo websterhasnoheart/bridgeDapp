@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
-
 contract Bridge {
     //Variables
     address payable owner;
     address payable contractor;
     uint public projectBudget;
     uint256 public immutable startTime;
-    uint256 public immutable interval;
+    uint256 public immutable paymentInterval;
+    uint256 public paymentTimes;
     string public name;
     string public symbol;
-    mapping(address => uint) public balanceOf;
     mapping(address => uint) public releasedToken;
     
     //Events
@@ -27,7 +26,8 @@ contract Bridge {
             address payable _owner,
             address payable _contractor, 
             uint256 _projectBudget,
-            uint256 PaymentInterval
+            uint256 _paymentTimes,
+            uint256 _paymentInterval
     ) payable {
             owner = _owner;
             contractor = _contractor;
@@ -35,7 +35,8 @@ contract Bridge {
             symbol = _symbol;
             startTime = block.timestamp;
             projectBudget = _projectBudget;
-            interval = PaymentInterval;
+            paymentInterval = _paymentInterval;
+            paymentTimes = _paymentTimes;
             require(_contractor != address(0));
             require(projectBudget != 0);
     }
@@ -77,21 +78,28 @@ contract Bridge {
 
     function terminateProject() public onlyOwner returns (bool success) {
         //Terminate project and smart contract, all funds will be transferred to owner's wallet
-        selfdestruct(owner);
+        uint256 releaseable = vestedAmount(block.timestamp);
+        if (releaseable == 0) {
+            selfdestruct(owner);
+        } else {
+            revert();
+        }
         return success;
     }
 
     function vestedAmount(uint256 timestamp) public view returns(uint256) {
+        // This function returns the releaseable amount of money that should be released to contractors
         if (timestamp < startTime) {
             return 0;
-        } else if (timestamp > startTime + interval) {
-            return projectBudget;
+        } else if (timestamp >= startTime + paymentTimes * paymentInterval && getBalance() > projectBudget / paymentTimes) {
+            return getBalance();
         } else {
-            return projectBudget * (timestamp - startTime) / interval;
+            return  getBalance() / paymentTimes;
         }
     }
 
     function release() public onlyContractor {
+        //This function release progress payment to contractors
         uint256 releaseable = vestedAmount(block.timestamp);
         releasedToken[contractor] += releaseable;
         emit PaymentSuccessful("Progress payment has been made", address(this), contractor, releaseable);
