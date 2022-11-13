@@ -1,5 +1,5 @@
 # BRIDGE
-Affiliated with research and development course in TU eindhoven
+Affiliated with research and development course by built environment department, Eindhoven university of technology.
 ## Introduction
 Bridge is a decentralized application designed for automating progress payment in construction project. This repo includes the code of prototype of the **Bridge**, viewers are free to use or fork this repo for any type of usage.
 
