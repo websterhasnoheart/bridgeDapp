@@ -9,6 +9,9 @@ Bridge is a decentralized application designed for automating billing payment in
 3. pyfiglet
 
 
+## Sneak peek
+
+
 ## Reference
 [How to deploy a smart contract with Brownie](https://www.quicknode.com/guides/smart-contract-development/how-to-deploy-a-smart-contract-with-brownie)
 
