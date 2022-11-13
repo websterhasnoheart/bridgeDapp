@@ -10,6 +10,9 @@ Bridge is a decentralized application designed for automating billing payment in
 
 
 ## Sneak peek
+![image](https://user-images.githubusercontent.com/66870019/201542281-741c1f0c-c5d9-4b3d-8b04-62128fc46dc6.png)
+![image](https://user-images.githubusercontent.com/66870019/201542292-05d6557f-2d75-4d63-863a-349c1f8be4ff.png)
+![image](https://user-images.githubusercontent.com/66870019/201542301-00961d02-2b99-4e41-b3ad-ebf896c24630.png)
 
 
 ## Reference
