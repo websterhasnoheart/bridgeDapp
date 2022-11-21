@@ -13,7 +13,7 @@ path = Path(myDir)
 a=str(path.parent.absolute())
 sys.path.append(a)
 from contract_action.compile_deploy import compile, deploy
-from contract_action.contract_interact import get_balance
+from contract_action.contract_interact import get_balance, deposit, withdrawal_funds, terminateProject, release_payment
 
 
 def main_menu():
@@ -139,3 +139,12 @@ def interact_menu():
         main_menu()
     elif option == '2':
         get_balance()
+        return_to_main = input("Press ENTER to return to the last menu")
+        if return_to_main == '':
+            interact_menu()
+    elif option == '1':
+        amount = input("\nInput the amount of funds you would like to deposit : ")
+        deposit(amount)
+        return_to_main = input("Press ENTER to return to the last menu")
+        if return_to_main == '':
+            interact_menu()
