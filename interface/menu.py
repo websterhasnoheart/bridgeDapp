@@ -17,10 +17,15 @@ from contract_action.contract_interact import get_balance, deposit, withdrawal_f
 
 
 def main_menu():
+    dotenv_file = find_dotenv()
+    load_dotenv(dotenv_file)
+    logined = os.getenv("LOGINED")
+    role = os.getenv("LOGIN_ROLE")
     f = Figlet(font='slant')
     os.system("cls")
     print (f.renderText('Bridge'))
-    print("Welcome to Bridge.dapp\n\n")
+    print("Welcome to Bridge.dapp\n")
+    print(f"Your role : {role}") if logined == "true" else print("Please set up roles\n")
     print("choose a option")
     print("""
 [1] Compile and deploy smart contract
@@ -63,10 +68,11 @@ def compile_deploy_menu():
 
         os.environ["OWNER_WALLET"] = owner_wallet
         os.environ["OWNER_PRIVATE_KEY"] = owner_wallet_private_key
-
+        
         set_key(dotenv_file, "OWNER_WALLET",  os.environ["OWNER_WALLET"])
         set_key(dotenv_file, "OWNER_PRIVATE_KEY",  os.environ["OWNER_PRIVATE_KEY"])
-        
+        os.environ["LOGINED"] = "true"
+        set_key(dotenv_file, "LOGINED",  os.environ["LOGINED"])
         print("Owner wallet and private key was successfully set")
         compile_deploy_menu()
     elif option == '2':
@@ -148,3 +154,52 @@ def interact_menu():
         return_to_main = input("Press ENTER to return to the last menu")
         if return_to_main == '':
             interact_menu()
+    elif option == '4':
+        confirm = input("\nAre you sure you want to withdrawal all the funds from the smart contract (Y/N) ")
+        if confirm.upper() == 'Y':
+            withdrawal_funds()
+        else:
+            interact_menu()
+        return_to_main = input("Press ENTER to return to the last menu")
+        if return_to_main == '':
+            interact_menu()
+    elif option == '5':
+        confirm = input("\nAre you sure you want to terminate the project and withdrawal all the funds(Y/N)")
+        if confirm.upper() == 'Y':
+            terminateProject()
+        else:
+            interact_menu()
+        return_to_main = input("Press ENTER to return to the last menu")
+        if return_to_main == '':
+            interact_menu()
+    elif option == '6':
+        confirm = input("\nAre you sure you want to vest the progess payment right now(Y/N)")
+        if confirm.upper() == 'Y':
+            release_payment()
+        else:
+            interact_menu()
+        return_to_main = input("Press ENTER to return to the last menu")
+        if return_to_main == '':
+            interact_menu()
+
+def login_menu():
+    dotenv_file = find_dotenv()
+    load_dotenv(dotenv_file)
+    contractor_address = os.getenv("CONTRACTOR_WALLET")
+    owner_address = os.getenv("OWNER_WALLET")
+    f = Figlet(font='slant')
+    os.system("cls")
+    print (f.renderText('Bridge'))
+    
+    print(f"\n\nHey there, please login : ")
+    wallet_address = input("\nPlease input your wallet address: ")
+    if wallet_address == contractor_address:
+        os.environ["LOGIN_ROLE"] = "contractor"
+        main_menu()
+    elif wallet_address == owner_address:
+        os.environ["LOGIN_ROLE"] = "owner"
+        main_menu()
+    else:
+        print("Invalid wallet address")
+        login_menu()
+        

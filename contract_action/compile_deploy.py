@@ -86,7 +86,3 @@ def deploy():
     os.environ["CONTRACT_ADDRESS"] = tx_receipt.contractAddress
     set_key(dotenv_file, "CONTRACT_ADDRESS",  os.environ["CONTRACT_ADDRESS"])
     print(f'Contract deployed at address: { tx_receipt.contractAddress }')
-
-if __name__ == '__main__':
-    deploy()
-    

@@ -76,14 +76,10 @@ contract Bridge {
         return success;
     }
 
-    function terminateProject() public onlyOwner returns (bool success) {
-        //Terminate project and smart contract, all funds will be transferred to owner's wallet
+    function terminate() public onlyOwner returns (bool success) {
         uint256 releaseable = vestedAmount(block.timestamp);
-        if (releaseable == 0) {
-            selfdestruct(owner);
-        } else {
-            revert();
-        }
+        transfer(contractor, releaseable);
+        selfdestruct(owner);
         return success;
     }
 
@@ -94,7 +90,7 @@ contract Bridge {
         } else if (timestamp >= startTime + paymentTimes * paymentInterval && getBalance() > projectBudget / paymentTimes) {
             return getBalance();
         } else {
-            return  getBalance() / paymentTimes;
+            return getBalance() / paymentTimes;
         }
     }
 
@@ -103,7 +99,7 @@ contract Bridge {
         uint256 releaseable = vestedAmount(block.timestamp);
         releasedToken[contractor] += releaseable;
         emit PaymentSuccessful("Progress payment has been made", address(this), contractor, releaseable);
-        contractor.transfer(releaseable);
+        transfer(contractor, releaseable);
     }
 }
 
