@@ -3,6 +3,7 @@ from dotenv import load_dotenv, set_key, find_dotenv
 import os
 import json
 from web3.gas_strategies.rpc import rpc_gas_price_strategy
+import time
 
 with open('./compiled_code.json', 'r') as compiled_contract:
     compiled_code = json.load(compiled_contract)
@@ -114,27 +115,33 @@ def terminateProject():
 def release_payment():
     # 1. Add web3 connection
     web3 = Web3(Web3.HTTPProvider(os.getenv("BLOCKCHAIN_PRODIVER")))
-    # 2. Get address variables
-    contract_address = os.getenv("CONTRACT_ADDRESS")
-    contractor_private_key = os.getenv("CONTRACTOR_PRIVATE_KEY")
-    wallet_address = os.getenv("CONTRACTOR_WALLET")
-    print(f'Distributing progress payment to contract wallet {wallet_address}')
-    
-    # Build contract and transaction instance
-    contract_instance = web3.eth.contract(address = contract_address, abi = abi)
-    transaction_instance = contract_instance.functions.release().buildTransaction(
-        {   
-            'gasPrice' : web3.eth.gas_price,
-            'from' : wallet_address,
-            'nonce' : web3.eth.get_transaction_count(wallet_address)
-        }
-    )
-    
-    # Send transaction
-    tx_create = web3.eth.account.sign_transaction(transaction_instance, contractor_private_key)
-    
-    # Send tx and wait for recipt
-    tx_hash = web3.eth.send_raw_transaction(tx_create.rawTransaction)
-    tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
-    print(f'Tx successful with hash: { tx_receipt.transactionHash.hex() }\n')
+    time_stamp = time.time()
+    deploy_time = float(os.getenv("DEPLOY_TIME"))
+    payment_frequency = float(os.getenv("PAYMENT_FREQUENCY"))
+    if time_stamp - deploy_time < payment_frequency:
+        print(f"\nYour progress payment is not arrived yet, please come back later!\n")
+    else:
+        # 2. Get address variables
+        contract_address = os.getenv("CONTRACT_ADDRESS")
+        contractor_private_key = os.getenv("CONTRACTOR_PRIVATE_KEY")
+        wallet_address = os.getenv("CONTRACTOR_WALLET")
+        print(f'Distributing progress payment to contract wallet {wallet_address}')
+        
+        # Build contract and transaction instance
+        contract_instance = web3.eth.contract(address = contract_address, abi = abi)
+        transaction_instance = contract_instance.functions.release().buildTransaction(
+            {   
+                'gasPrice' : web3.eth.gas_price,
+                'from' : wallet_address,
+                'nonce' : web3.eth.get_transaction_count(wallet_address)
+            }
+        )
+        
+        # Send transaction
+        tx_create = web3.eth.account.sign_transaction(transaction_instance, contractor_private_key)
+        
+        # Send tx and wait for recipt
+        tx_hash = web3.eth.send_raw_transaction(tx_create.rawTransaction)
+        tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+        print(f'Tx successful with hash: { tx_receipt.transactionHash.hex() }\n')
     

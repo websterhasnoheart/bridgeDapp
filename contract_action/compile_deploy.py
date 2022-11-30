@@ -3,6 +3,7 @@ import os
 from solcx import compile_standard, install_solc
 from dotenv import load_dotenv, set_key, find_dotenv
 import json
+import time
 
 with open('./compiled_code.json', 'r') as compiled_contract:
     compiled_code = json.load(compiled_contract)
@@ -46,7 +47,9 @@ def deploy():
     #load env variables and compiled contract code
     dotenv_file = find_dotenv()
     load_dotenv(dotenv_file)
-
+    time_stamp = time.time()
+    os.environ["DEPLOY_TIME"] = str(time_stamp)
+    set_key(dotenv_file, "DEPLOY_TIME",  os.environ["DEPLOY_TIME"])
     # Create the contract in Python
     
     chain_id = int(os.getenv("CHAIN_ID"))
